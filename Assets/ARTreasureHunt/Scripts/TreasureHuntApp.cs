@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.XR.ARFoundation;
 
 public enum AppTab { Treasures, Scan, Ranks }
 
@@ -16,6 +17,7 @@ public class TreasureHuntApp : MonoBehaviour
     public RanksScreenController ranksScreen;
     public TabBarController tabBar;
     public CollectPopupController collectPopup;
+    public ARSession arSession;
 
     List<string> found = new List<string>();
     string nickname = "Nickname";
@@ -49,6 +51,8 @@ public class TreasureHuntApp : MonoBehaviour
         scanScreen.gameObject.SetActive(tab == AppTab.Scan);
         treasuresScreen.gameObject.SetActive(tab == AppTab.Treasures);
         ranksScreen.gameObject.SetActive(tab == AppTab.Ranks);
+        if (arSession != null)
+            arSession.enabled = tab == AppTab.Scan;
         tabBar.Highlight(tab);
         if (tab == AppTab.Treasures)
             treasuresScreen.Refresh();
