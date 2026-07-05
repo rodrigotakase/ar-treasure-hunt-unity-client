@@ -19,9 +19,13 @@ public class TreasureHuntApp : MonoBehaviour
     public CollectPopupController collectPopup;
     public ARSession arSession;
     public QrScanner qrScanner;
+    public CrystalSpawner crystalSpawner;
 
     List<string> found = new List<string>();
     string nickname = "Nickname";
+    string scannedTreasureId;
+    CrystalBehaviour activeCrystal;
+    bool collecting;
 
     public int Score => found.Count;
     public string Nickname => nickname;
@@ -33,6 +37,21 @@ public class TreasureHuntApp : MonoBehaviour
             found.AddRange(savedFound.Split(','));
         found.RemoveAll(id => System.Array.Find(GemCatalog.All, g => g.id == id) == null);
         nickname = PlayerPrefs.GetString("treasureHunt.nickname", "You");
+        if (string.IsNullOrEmpty(nickname))
+        {
+            nickname = GenerateNickname();
+            Save();
+        }
+    }
+
+    static string GenerateNickname()
+    {
+        const string chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        int length = Random.Range(4, 6);
+        var suffix = "";
+        for (int i = 0; i < length; i++)
+            suffix += chars[Random.Range(0, chars.Length)];
+        return "Player#" + suffix;
     }
 
     void Start()
@@ -56,25 +75,23 @@ public class TreasureHuntApp : MonoBehaviour
         ranksScreen.gameObject.SetActive(tab == AppTab.Ranks);
         if (arSession != null)
             arSession.enabled = tab == AppTab.Scan;
+        if (activeCrystal != null)
+            activeCrystal.gameObject.SetActive(tab == AppTab.Scan);
+        bool idle = activeCrystal == null && !collecting;
         if (qrScanner != null)
         {
-            if (tab == AppTab.Scan)
+            if (tab == AppTab.Scan && idle)
                 qrScanner.StartScanning();
-            else
+            else if (tab != AppTab.Scan)
                 qrScanner.StopScanning();
         }
         tabBar.Highlight(tab);
-        if (tab == AppTab.Scan)
+        if (tab == AppTab.Scan && idle)
             scanScreen.ArmScan();
         if (tab == AppTab.Treasures)
             treasuresScreen.Refresh();
         if (tab == AppTab.Ranks)
             ranksScreen.Refresh();
-    }
-
-    public bool IsFound(string id)
-    {
-        return found.Contains(id);
     }
 
     public Gem NextGem()
@@ -124,21 +141,26 @@ public class TreasureHuntApp : MonoBehaviour
     {
         activeCrystal = null;
         scanScreen.HideTapUI();
+        api.Collect(scannedTreasureId, nickname, OnCollected, error =>
+        {
+            Debug.LogWarning("Could not collect treasure " + scannedTreasureId + ": " + error);
+            collecting = false;
+            scanScreen.ArmScan();
+            qrScanner.StartScanning();
+        });
     }
 
     void OnCollected(CollectResult result)
     {
+        treasuresScreen.Refresh();
+        ranksScreen.Refresh();
         collectPopup.Show(result.treasure, result.alreadyCollected);
     }
 
     public void OnPopupClosed()
     {
-        scanScreen.ArmScan();
-    }
-
-    void OnTreasureScanned(string treasureId)
-    {
-        Debug.Log("Scanned treasure " + treasureId);
+        collecting = false;
+        ShowTab(AppTab.Treasures);
     }
 
     public void SetNickname(string value)
