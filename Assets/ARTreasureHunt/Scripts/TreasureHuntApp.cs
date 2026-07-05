@@ -85,15 +85,50 @@ public class TreasureHuntApp : MonoBehaviour
         return null;
     }
 
-    public void Collect(Gem gem)
+    void OnTreasureScanned(string treasureId)
     {
-        if (!found.Contains(gem.id))
-            found.Add(gem.id);
-        Save();
-        RefreshScore();
-        treasuresScreen.Refresh();
-        ranksScreen.Refresh();
-        collectPopup.Show(gem);
+        collecting = true;
+        api.GetTreasure(treasureId, info => SpawnCrystal(treasureId, info), error =>
+        {
+            Debug.LogWarning("Could not load treasure " + treasureId + ": " + error);
+            collecting = false;
+            qrScanner.StartScanning();
+        });
+    }
+
+    void SpawnCrystal(string treasureId, TreasureInfo info)
+    {
+        scannedTreasureId = treasureId;
+        activeCrystal = crystalSpawner.Spawn(info.color);
+        if (activeCrystal == null)
+        {
+            Debug.LogWarning("Could not spawn crystal for treasure " + treasureId);
+            collecting = false;
+            qrScanner.StartScanning();
+            return;
+        }
+        activeCrystal.Shattered += OnCrystalShattered;
+        activeCrystal.Tapped += OnCrystalTapped;
+        qrScanner.StopScanning();
+        scanScreen.ShowTapUI(info.name, activeCrystal.tapsToShatter);
+        Debug.Log("Crystal spawned for " + info.name + " at " + activeCrystal.transform.position);
+    }
+
+    void OnCrystalTapped(int taps)
+    {
+        if (activeCrystal != null)
+            scanScreen.UpdateTapProgress(taps, activeCrystal.tapsToShatter);
+    }
+
+    void OnCrystalShattered()
+    {
+        activeCrystal = null;
+        scanScreen.HideTapUI();
+    }
+
+    void OnCollected(CollectResult result)
+    {
+        collectPopup.Show(result.treasure, result.alreadyCollected);
     }
 
     public void OnPopupClosed()

@@ -5,8 +5,10 @@ using UnityEngine.UI;
 public class CollectPopupController : MonoBehaviour
 {
     public Image gemImage;
+    public TMP_Text titleText;
     public TMP_Text nameText;
     public TMP_Text locationText;
+    public GameObject pointsBadge;
     public Button continueButton;
 
     TreasureHuntApp app;
@@ -17,11 +19,14 @@ public class CollectPopupController : MonoBehaviour
         continueButton.onClick.AddListener(Close);
     }
 
-    public void Show(Gem gem)
+    public void Show(CollectedTreasure treasure, bool alreadyCollected)
     {
-        gemImage.color = gem.color;
-        nameText.text = gem.displayName;
-        locationText.text = "Found in the " + gem.location;
+        if (ColorUtility.TryParseHtmlString(treasure.color, out var color))
+            gemImage.color = color;
+        titleText.text = alreadyCollected ? "ALREADY COLLECTED" : "GEM COLLECTED";
+        nameText.text = treasure.name;
+        locationText.text = string.IsNullOrEmpty(treasure.location) ? treasure.hunt_name : treasure.location;
+        pointsBadge.SetActive(!alreadyCollected);
         gameObject.SetActive(true);
     }
 
