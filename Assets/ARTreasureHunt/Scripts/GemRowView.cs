@@ -21,11 +21,21 @@ public class GemRowView : MonoBehaviour
     static readonly Color dim = new Color32(110, 106, 95, 255);
     static readonly Color dimmer = new Color32(84, 81, 74, 255);
 
-    public void Bind(Gem gem, bool found, bool showHints)
+    public void Bind(HuntTreasure treasure, bool showHints)
     {
-        nameText.text = gem.displayName;
-        subText.text = found ? "Found · " + gem.location : "Hint: " + (showHints ? gem.hint : "· · ·");
-        icon.color = found ? gem.color : lockedIcon;
+        bool found = treasure.collected;
+        nameText.text = treasure.name;
+        if (found)
+            subText.text = string.IsNullOrEmpty(treasure.location) ? "Found" : "Found · " + treasure.location;
+        else if (showHints && !string.IsNullOrEmpty(treasure.hint))
+            subText.text = "Hint: " + treasure.hint;
+        else
+            subText.text = "Hint: · · ·";
+
+        Color treasureColor;
+        if (!ColorUtility.TryParseHtmlString(treasure.color, out treasureColor))
+            treasureColor = ivory;
+        icon.color = found ? treasureColor : lockedIcon;
         fillImage.color = found ? foundFill : lockedFill;
         borderImage.color = found ? foundBorder : lockedBorder;
         nameText.color = found ? ivory : dim;

@@ -7,7 +7,9 @@ public enum AppTab { Treasures, Scan, Ranks }
 public class TreasureHuntApp : MonoBehaviour
 {
     public bool showHints = true;
+    public int huntId = 1;
 
+    public TreasureHuntApi api;
     public TMP_Text scoreText;
     public ScanScreenController scanScreen;
     public TreasuresScreenController treasuresScreen;
@@ -16,7 +18,7 @@ public class TreasureHuntApp : MonoBehaviour
     public CollectPopupController collectPopup;
 
     List<string> found = new List<string>();
-    string nickname = "Explorer";
+    string nickname = "Nickname";
 
     public int Score => found.Count;
     public string Nickname => nickname;
@@ -85,9 +87,14 @@ public class TreasureHuntApp : MonoBehaviour
 
     public void SetNickname(string value)
     {
-        nickname = string.IsNullOrEmpty(value) ? "Explorer" : value;
+        nickname = string.IsNullOrEmpty(value) ? "Nickname" : value;
         Save();
         ranksScreen.Refresh();
+    }
+
+    public void UpdateScore(int score)
+    {
+        scoreText.text = score.ToString();
     }
 
     void RefreshScore()
