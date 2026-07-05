@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -9,23 +10,43 @@ public class RanksScreenController : MonoBehaviour
     public RankRowView rowTemplate;
 
     TreasureHuntApp app;
-    RankRowView playerRow;
+    readonly List<RankRowView> rows = new List<RankRowView>();
 
     public void Init(TreasureHuntApp app)
     {
         this.app = app;
         nicknameField.text = app.Nickname;
-        nicknameField.onValueChanged.AddListener(app.SetNickname);
-        playerRow = Instantiate(rowTemplate, rowTemplate.transform.parent);
-        playerRow.gameObject.SetActive(true);
+        nicknameField.onEndEdit.AddListener(app.SetNickname);
         Refresh();
     }
 
     public void Refresh()
     {
-        if (playerRow == null)
+        if (app == null)
             return;
-        playerRow.Bind(1, app.Nickname, app.Score, true);
+        app.api.GetLeaderboard(app.huntId, OnLoaded, error =>
+        {
+            Debug.LogWarning("Could not load leaderboard: " + error);
+        });
+    }
+
+    void OnLoaded(Leaderboard data)
+    {
+        foreach (var row in rows)
+            Destroy(row.gameObject);
+        rows.Clear();
+
+        foreach (var entry in data.leaderboard)
+        {
+            var row = Instantiate(rowTemplate, rowTemplate.transform.parent);
+            row.gameObject.SetActive(true);
+            string name = string.IsNullOrEmpty(entry.nickname) ? "Anonymous" : entry.nickname;
+            bool me = !string.IsNullOrEmpty(entry.nickname) && entry.nickname == app.Nickname;
+            row.Bind(entry.rank, name, entry.collected, me);
+            rows.Add(row);
+        }
+        if (scrollRect != null)
+            scrollRect.verticalNormalizedPosition = 1f;
     }
 
     void OnEnable()
