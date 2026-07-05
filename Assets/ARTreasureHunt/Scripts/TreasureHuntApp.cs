@@ -22,7 +22,7 @@ public class TreasureHuntApp : MonoBehaviour
     public CrystalSpawner crystalSpawner;
 
     List<string> found = new List<string>();
-    string nickname = "Nickname";
+    string nickname;
     string scannedTreasureId;
     CrystalBehaviour activeCrystal;
     bool collecting;
@@ -36,7 +36,7 @@ public class TreasureHuntApp : MonoBehaviour
         if (savedFound.Length > 0)
             found.AddRange(savedFound.Split(','));
         found.RemoveAll(id => System.Array.Find(GemCatalog.All, g => g.id == id) == null);
-        nickname = PlayerPrefs.GetString("treasureHunt.nickname", "You");
+        nickname = PlayerPrefs.GetString("treasureHunt.nickname", "");
         if (string.IsNullOrEmpty(nickname))
         {
             nickname = GenerateNickname();
@@ -165,7 +165,9 @@ public class TreasureHuntApp : MonoBehaviour
 
     public void SetNickname(string value)
     {
-        nickname = string.IsNullOrEmpty(value) ? "Nickname" : value;
+        if (string.IsNullOrEmpty(value))
+            return;
+        nickname = value;
         Save();
         ranksScreen.Refresh();
     }
