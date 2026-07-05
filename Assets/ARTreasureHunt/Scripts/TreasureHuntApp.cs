@@ -18,6 +18,7 @@ public class TreasureHuntApp : MonoBehaviour
     public TabBarController tabBar;
     public CollectPopupController collectPopup;
     public ARSession arSession;
+    public QrScanner qrScanner;
 
     List<string> found = new List<string>();
     string nickname = "Nickname";
@@ -41,6 +42,8 @@ public class TreasureHuntApp : MonoBehaviour
         treasuresScreen.Init(this);
         ranksScreen.Init(this);
         collectPopup.Init(this);
+        if (qrScanner != null)
+            qrScanner.TreasureFound += OnTreasureScanned;
         RefreshScore();
         ShowTab(AppTab.Scan);
         scanScreen.ArmScan();
@@ -53,7 +56,16 @@ public class TreasureHuntApp : MonoBehaviour
         ranksScreen.gameObject.SetActive(tab == AppTab.Ranks);
         if (arSession != null)
             arSession.enabled = tab == AppTab.Scan;
+        if (qrScanner != null)
+        {
+            if (tab == AppTab.Scan)
+                qrScanner.StartScanning();
+            else
+                qrScanner.StopScanning();
+        }
         tabBar.Highlight(tab);
+        if (tab == AppTab.Scan)
+            scanScreen.ArmScan();
         if (tab == AppTab.Treasures)
             treasuresScreen.Refresh();
         if (tab == AppTab.Ranks)
@@ -87,6 +99,11 @@ public class TreasureHuntApp : MonoBehaviour
     public void OnPopupClosed()
     {
         scanScreen.ArmScan();
+    }
+
+    void OnTreasureScanned(string treasureId)
+    {
+        Debug.Log("Scanned treasure " + treasureId);
     }
 
     public void SetNickname(string value)

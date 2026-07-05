@@ -326,7 +326,8 @@ MonoBehaviour:
   ranksScreen: {fileID: 789239272}
   tabBar: {fileID: 1038711316}
   collectPopup: {fileID: 1675303654}
-  arSession: {fileID: 0}
+  arSession: {fileID: 2108313289}
+  qrScanner: {fileID: 0}
 --- !u!114 &30218907
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8665,6 +8666,7 @@ GameObject:
   - component: {fileID: 1970905913}
   - component: {fileID: 1970905912}
   - component: {fileID: 1970905911}
+  - component: {fileID: 1970905917}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -8924,6 +8926,20 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &1970905917
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1970905909}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfe4cb3d71c694c928876c0680c0998a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QrScanner
+  cameraManager: {fileID: 1970905914}
+  scanInterval: 0.5
 --- !u!1 &1978237604
 GameObject:
   m_ObjectHideFlags: 0
