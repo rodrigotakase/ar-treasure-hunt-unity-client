@@ -4,7 +4,10 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/ARTreasureHunt/Scenes/MainApp.unity
+    guid: 4964773eb153e4912a31f207b8812f0c
   m_configObjects:
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: c52d3bb36b4c86f47af54ab9c7a02589,
       type: 2}
