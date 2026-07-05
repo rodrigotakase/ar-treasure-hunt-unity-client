@@ -5681,13 +5681,13 @@ MonoBehaviour:
     italicTypeface: {fileID: 0}
   - regularTypeface: {fileID: 0}
     italicTypeface: {fileID: 0}
-  - regularTypeface: {fileID: 0}
+  - regularTypeface: {fileID: 11400000, guid: 9a9a99477cdf64ea89052bb9c7ac4eed, type: 2}
     italicTypeface: {fileID: 0}
   - regularTypeface: {fileID: 0}
     italicTypeface: {fileID: 0}
-  - regularTypeface: {fileID: 0}
+  - regularTypeface: {fileID: 11400000, guid: 6c83c7f6be1e64dc880756d58571fbe8, type: 2}
     italicTypeface: {fileID: 0}
-  - regularTypeface: {fileID: 0}
+  - regularTypeface: {fileID: 11400000, guid: 98df91375a5be46fbb6043a7cf7b8fb3, type: 2}
     italicTypeface: {fileID: 0}
   - regularTypeface: {fileID: 11400000, guid: b596ca0a92722452a834db97a1b96d0a, type: 2}
     italicTypeface: {fileID: 0}
@@ -5848,9 +5848,9 @@ Material:
     - _OutlineWidth: 0
     - _PerspectiveFilter: 0.875
     - _Reflectivity: 10
-    - _ScaleRatioA: 1
-    - _ScaleRatioB: 1
-    - _ScaleRatioC: 1
+    - _ScaleRatioA: 0.875
+    - _ScaleRatioB: 0.7109375
+    - _ScaleRatioC: 0.7109375
     - _ScaleX: 1
     - _ScaleY: 1
     - _ShaderFlags: 0
